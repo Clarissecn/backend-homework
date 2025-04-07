@@ -18,7 +18,7 @@ evenements_df = pd.read_csv(data / 'evenements_associations.csv')
 
 ## Vous devez ajouter les routes ici : 
 
-@app.route('api/alive', methods = ['GET'])
+@app.route('/api/alive', methods = ['GET'])
 def check_alive():
     return jsonify(message='Alive'), 200
 
@@ -51,7 +51,7 @@ def get_evenement_asso(id):
         return jsonify(association_evenements.to_dict(orient='records')[2]), 200
     return jsonify({'error': 'Evenement not found'}), 404
 
-@app.route('/api/associations/type/<type<', methods = ['GET'])
+@app.route('/api/associations/type/<type>', methods = ['GET'])
 def get_associations_by_type(type):
     associations_type = associations_df[associations_df['type'] == type]
     if not associations_type.empty:
