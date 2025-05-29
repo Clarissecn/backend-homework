@@ -12,8 +12,8 @@ CORS(app)
 
 class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(80))
-    content = db.Column(db.String(200))
+    title = db.Column(db.String(100))
+    content = db.Column(db.String(300))
     done = db.Column(db.Boolean, default=False)
 
 @app.route('/')
@@ -28,17 +28,19 @@ def notes_front():
 @app.route('/api/notes', methods=["POST"])
 def cree_note():
     data = request.json
-    note = Note(title=data["title"], content=data["content"], done=False)
-    db.session.add(note)
+    titre = data["title"]
+    contenu = data["content"]
+    nouvelle_note = Note(title=titre, content=contenu, done=False)
+    db.session.add(nouvelle_note)
     db.session.commit()
     socketio.emit("note_update", {"action": "create"})
-    return dict({"id": note.id})
+    return dict({"id": nouvelle_note.id})
 
 @app.route('/api/notes/<int:note_id>', methods=["PATCH"])
 def maj_note(note_id):
     note = Note.query.get(note_id)
     if note is None:
-        return jsonify({"error": "Note not found"}), 404
+        return dict({"error": "Note not found"}), 404
     data = request.json
     if "done" in data:
         note.done = data["done"]
@@ -48,7 +50,7 @@ def maj_note(note_id):
 
 @socketio.on('connect')
 def connect():
-    print("Client connecté")
+    print("Nouveau navigateur connecté")
 
 if __name__ == '__main__':
     with app.app_context():
